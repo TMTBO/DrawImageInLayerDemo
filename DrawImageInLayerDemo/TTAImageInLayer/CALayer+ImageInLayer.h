@@ -11,19 +11,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
-/**
- *  以 Rect 绘制时的选择是 保持原有比例 还是 保持 Rect 大小
- */
-typedef NS_ENUM(NSInteger, TTAImageInLayerRectState) {
-    /**
-     *  保持图片原有比例(默认)
-     */
-    kTTAImageInLayerRectStateProportionable,
-    /**
-     *  以指定的 Rect 优先,这样图片可能会变形
-     */
-    kTTAImageInLayerRectStateRectFirst,
-};
 
 @interface CALayer (ImageInLayer)
 /**
@@ -36,11 +23,13 @@ typedef NS_ENUM(NSInteger, TTAImageInLayerRectState) {
 /**
  *  在 layer 的指定区域绘制获取的图片
  *
- *  @param rect     指定的绘制区域
- *  @param state    Rect的绘制状态
- *  @param getImage 获取图片的 block
+ *  @param rect           指定的绘制区域
+ *  @param contentMode    图片填充模式, 参照 CALayer 的 contentsGravity 属性
+ *  @param getImage       获取图片的 block
  */
-- (void)drawImageInRect:(CGRect)rect rectState:(TTAImageInLayerRectState)state getImage:(UIImage * (^) ())getImage;
+- (void)drawImageInRect:(CGRect)rect
+            contentMode:(NSString *)contentsGravity
+               getImage:(UIImage * (^) ())getImage;
 
 /**
  *  在 layer 上从指定点开始绘制获取的图片

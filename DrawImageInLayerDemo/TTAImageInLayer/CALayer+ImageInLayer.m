@@ -30,34 +30,27 @@
 /**
  *  在 layer 的指定区域绘制获取的图片
  *
- *  @param rect     指定的绘制区域
- *  @param state    Rect的绘制状态
- *  @param getImage 获取图片的 block
+ *  @param rect           指定的绘制区域
+ *  @param contentMode    图片填充模式, 参照 CALayer 的contentsGravity属性
+ *  @param getImage       获取图片的 block
  */
 - (void)drawImageInRect:(CGRect)rect
-                     rectState:(TTAImageInLayerRectState)state
-                      getImage:(UIImage * (^) ())getImage {
+              contentMode:(NSString *)contentsGravity
+               getImage:(UIImage * (^) ())getImage {
     dispatch_async (dispatch_get_global_queue (0, 0), ^{
         // 异步获取图片
         UIImage *image = getImage ();
         // 将图片绘制到上下文中
         UIGraphicsBeginImageContext (image.size);
 
-        // 根据不同状态绘制图片
-        if (state) {
-            [image drawInRect:rect];
-        } else {
-            // 计图片比例
-            CGFloat width  = image.size.width;
-            CGFloat height = image.size.height;
-            [image drawInRect:CGRectMake (rect.origin.x, rect.origin.y, width, height)];
-        }
+        self.contentsGravity = contentsGravity;
+        [image drawInRect:rect];
 
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext ();
         UIGraphicsEndImageContext ();
         dispatch_async (dispatch_get_main_queue (), ^{
             // 回到主视图绘制图片
-            self.contents = (__bridge id _Nullable) ([newImage CGImage]);
+            self.contents = (__bridge id _Nullable) (newImage.CGImage);
         });
     });
 }
@@ -82,7 +75,7 @@
         UIGraphicsEndImageContext ();
         dispatch_async (dispatch_get_main_queue (), ^{
             // 回到主视图绘制图片
-            self.contents = (__bridge id _Nullable) ([newImage CGImage]);
+            self.contents = (__bridge id _Nullable) (newImage.CGImage);
         });
     });
 }
