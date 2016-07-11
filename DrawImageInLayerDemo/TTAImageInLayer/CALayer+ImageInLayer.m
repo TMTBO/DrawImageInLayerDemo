@@ -18,7 +18,8 @@
 - (void)drawImageGetImage:(UIImage * (^) ())getImage {
     dispatch_async (dispatch_get_global_queue (0, 0), ^{
         // 异步获取图片
-        UIImage *image = getImage ();
+        UIImage *image     = getImage ();
+        self.contentsScale = image.scale;
 
         dispatch_async (dispatch_get_main_queue (), ^{
             // 回到主视图绘制图片
@@ -35,7 +36,7 @@
  *  @param getImage       获取图片的 block
  */
 - (void)drawImageInRect:(CGRect)rect
-              contentMode:(NSString *)contentsGravity
+            contentMode:(NSString *)contentsGravity
                getImage:(UIImage * (^) ())getImage {
     dispatch_async (dispatch_get_global_queue (0, 0), ^{
         // 异步获取图片
@@ -44,6 +45,7 @@
         UIGraphicsBeginImageContext (image.size);
 
         self.contentsGravity = contentsGravity;
+        self.contentsScale   = image.scale;
         [image drawInRect:rect];
 
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext ();
@@ -70,6 +72,7 @@
 
         // 从指定点开始绘制图片
         [image drawAtPoint:point];
+        self.contentsScale = image.scale;
 
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext ();
         UIGraphicsEndImageContext ();
